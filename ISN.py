@@ -24,16 +24,16 @@ class Character:
     
     def reset_position(self):
         self.body.x = width/2
-        self.body.y = height-plateform_height-50
+        self.body.y = height-platform_height-50
 
-class plateform:
+class platform:
     def __init__(self,x,y,w,h):
         self.body = pygame.Rect(x,y,w,h)
 
     def draw(self):
         pygame.draw.rect(screen,"Black",self.body)
 
-class Plateform_List:
+class platform_List:
     def __init__(self):
         self.sol = None 
         self.list = []
@@ -46,35 +46,35 @@ class Plateform_List:
 
     def restart(self):
         for i in range(self.len):
-            self.list[i].body.x = r.randint(0,width-plateform_width)
+            self.list[i].body.x = r.randint(0,width-platform_width)
 
-plateform_width = 50
-plateform_height = 20
-nb_plateform = 7
-space = (height - plateform_height - nb_plateform*plateform_height)/nb_plateform
+platform_width = 50
+platform_height = 20
+nb_platform = 7
+space = (height - platform_height - nb_platform*platform_height)/nb_platform
 
 def create_level():
-    plateform_list = Plateform_List()
-    sol = plateform(0,height-plateform_height,width,plateform_height)
-    plateform_list.sol = sol
+    platform_list = platform_List()
+    sol = platform(0,height-platform_height,width,platform_height)
+    platform_list.sol = sol
 
-    for i in range (nb_plateform):
-        plateform_list.list.append(plateform(r.randint(0,width-plateform_width),(sol.body.x)+(i+1)*space+plateform_height,plateform_width,plateform_height))
-        plateform_list.len +=1
+    for i in range (nb_platform):
+        platform_list.list.append(platform(r.randint(0,width-platform_width),(sol.body.x)+(i+1)*space+platform_height,platform_width,platform_height))
+        platform_list.len +=1
 
-    return plateform_list
+    return platform_list
 
 
 def update_level():
     screen.fill("White")
-    plateform_list.draw_level()
+    platform_list.draw_level()
     perso.draw()
 
 
 
-plateform_list = create_level()
+platform_list = create_level()
 
-perso = Character(width/2,height-plateform_height-50,20,50)
+perso = Character(width/2,height-platform_height-50,20,50)
 perso.draw()
 
 while True:
@@ -85,7 +85,7 @@ while True:
             exit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_r:
-                plateform_list.restart()
+                platform_list.restart()
                 perso.reset_position()
             elif event.key == pygame.K_SPACE:
                 for i in range(200):
