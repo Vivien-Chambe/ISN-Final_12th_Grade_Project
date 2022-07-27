@@ -19,6 +19,7 @@ class Character:
         self.x = x
         self.y = y 
         self.image = image
+        self.test = 0
 
 class Platform:
     def __init__(self,x,y,w,h):
