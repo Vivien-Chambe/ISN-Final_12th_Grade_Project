@@ -20,16 +20,18 @@ platform_width = 50
 platform_height = 20
 nb_platform = 7
 space = (height - platform_height - nb_platform*platform_height)/nb_platform
+max_height = 185
 
 colors = list(pygame.colordict.THECOLORS.keys())
 background_color = r.choice(colors)
-
-print(pygame.colordict.THECOLORS.keys())
 
 
 class Character:
     def __init__(self,x,y,w,h):
         self.body = pygame.Rect(x,y,w,h)
+        self.jump_height = 0
+        self.falling = False
+        self.can_jump = True
 
     def draw(self):
         pygame.draw.rect(screen,"Red",self.body)
@@ -63,6 +65,9 @@ class Platform_List:
         for i in range(self.len):
             self.list[i].body.x = r.randint(0,width-platform_width)
 
+
+#TODO Fix x placement for plateforms because sometimes they are too far away from the previous one
+
 def create_level():
     platform_list = Platform_List()
     for i in range (nb_platform):
@@ -85,18 +90,23 @@ def give_rect_for_collision():
     return collision_list
 
 def check_collisions(perso,platform,platform_list): #Explanations in the README.md
+    perso.body.clamp_ip(pygame.display.get_surface().get_rect()) #Keep Character within the windows
+
     #Right collision of character
-    if (perso.right == platform.left and ((perso.top<=platform.top and perso.bottom>= platform.bottom) or (perso.top<=platform.top and perso.bottom>=platform.top) or (perso.top<=platform.bottom and perso.bottom>=platform.bottom))) or perso.right >= width:
-        perso.right -=1
+    if (perso.body.right == platform.left and ((perso.body.top<=platform.top and perso.body.bottom>= platform.bottom) or (perso.body.top<=platform.top and perso.body.bottom>=platform.top) or (perso.body.top<=platform.bottom and perso.body.bottom>=platform.bottom))):# or perso.right >= width:
+        perso.body.right -=1
     #Left collision 
-    elif (perso.left == platform.right and ((perso.top<=platform.top and perso.bottom>= platform.bottom) or (perso.top<=platform.top and perso.bottom>=platform.top) or (perso.top<=platform.bottom and perso.bottom>=platform.bottom))) or perso.left <= 0:
-        perso.left +=1
+    elif (perso.body.left == platform.right and ((perso.body.top<=platform.top and perso.body.bottom>= platform.bottom) or (perso.body.top<=platform.top and perso.body.bottom>=platform.top) or (perso.body.top<=platform.bottom and perso.body.bottom>=platform.bottom))):# or perso.left <= 0:
+        perso.body.left +=1
     #Bottom collision (with ground too)
-    elif (perso.bottom == platform.top and ((perso.left<=platform.left and perso.right >= platform.left) or (perso.left>=platform.left and perso.right<=platform.right) or (perso.left<=platform.right and perso.right>=platform.right))) or perso.bottom == platform_list.sol.body.top:
-        perso.bottom -=1
+    elif (perso.body.bottom == platform.top and ((perso.body.left<=platform.left and perso.body.right >= platform.left) or (perso.body.left>=platform.left and perso.body.right<=platform.right) or (perso.body.left<=platform.right and perso.body.right>=platform.right))) or perso.body.bottom == platform_list.sol.body.top:
+        perso.body.bottom -=1
+        perso.falling = False
+        perso.jump_height = 0
+        perso.can_jump = True
     #Top collision
-    elif (perso.top == platform.bottom and ((perso.left<=platform.left and perso.right >= platform.left) or (perso.left>=platform.left and perso.right<=platform.right) or (perso.left<=platform.right and perso.right>=platform.right))) or perso.top <= 0:
-        perso.top +=1
+    elif (perso.body.top == platform.bottom and ((perso.body.left<=platform.left and perso.body.right >= platform.left) or (perso.body.left>=platform.left and perso.body.right<=platform.right) or (perso.body.left<=platform.right and perso.body.right>=platform.right))):# or perso.top <= 0:
+        perso.body.top +=1
 
 platform_list = create_level()
 collisions_list = give_rect_for_collision()
@@ -116,7 +126,9 @@ while True:
 
     
     for p in collisions_list:    
-        check_collisions(perso.body,p,platform_list)
+        check_collisions(perso,p,platform_list)
+
+    print(perso.can_jump)
     ############################# Character Movement #########################
     keys = pygame.key.get_pressed()
 
@@ -126,8 +138,12 @@ while True:
     if keys[pygame.K_RIGHT]:
         perso.body.x += 1
 
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] and (not perso.falling) and perso.can_jump:
         perso.body.bottom -= 1
+        perso.jump_height += 1
+        if perso.jump_height >= max_height: 
+            perso.falling = True
+            perso.can_jump = False
     else:
         perso.body.bottom += 1
 
