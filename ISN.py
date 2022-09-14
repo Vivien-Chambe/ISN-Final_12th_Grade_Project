@@ -186,12 +186,6 @@ def check_collisions(perso,platform,platform_list): #Explanations in the README.
         platform_list.restart()
         perso.reset_position()
 
-def start():
-    screen.blit(menu,(0,0))
-    while True : 
-        print("bite")
-
-start()
 
 platform_list = create_level()
 random_background = r.choice(backs)
