@@ -1,13 +1,11 @@
-from turtle import left
-from unicodedata import name
-import pygame,os,sys
+import pygame,os,sys,time,threading
 from sys import exit
 import random as r
 
 pygame.init()
 
 width = 500
-height = 800
+height = pygame.display.Info().current_h-80
 screen = pygame.display.set_mode((width,height))
 pygame.display.set_caption("ISN")
 clock = pygame.time.Clock()
@@ -21,6 +19,7 @@ def resource_path(relative_path):
 graphics_dir = resource_path("Graphics")
 fill_surface = pygame.Surface((200,50))
 
+menu_picture =pygame.image.load(graphics_dir + "/menu.jpg")
 
 perso_sprite_left_1 =pygame.image.load(graphics_dir + "/sprite_left1.bmp")
 perso_sprite_left_1.set_colorkey("White")
@@ -150,7 +149,6 @@ def update_level():
     screen.blit(random_background,(0,0))
     platform_list.draw_level()
     perso.draw()
-    
 
 def give_rect_for_collision():
     collision_list = []
@@ -182,8 +180,8 @@ def check_collisions(perso,platform,platform_list): #Explanations in the README.
         platform_list.restart()
         perso.reset_position()
 
+##TODO StartMenu and loading
 
-#TEST GIT BRANCH
 
 platform_list = create_level()
 random_background = r.choice(backs)
@@ -192,7 +190,6 @@ perso = Character(width/2,height-platform_height-50,30,50)
 perso.draw()
 
 while True:
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
