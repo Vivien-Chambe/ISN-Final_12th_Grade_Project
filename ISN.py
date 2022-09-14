@@ -21,8 +21,6 @@ def resource_path(relative_path):
 graphics_dir = resource_path("Graphics")
 fill_surface = pygame.Surface((200,50))
 
-#### Sprites loading ######
-menu = pygame.image.load(graphics_dir + "/menu.jpg")
 
 perso_sprite_left_1 =pygame.image.load(graphics_dir + "/sprite_left1.bmp")
 perso_sprite_left_1.set_colorkey("White")
@@ -45,8 +43,6 @@ flag_sprite.set_colorkey("White")
 
 platforme_sprite = pygame.image.load(graphics_dir + "/platforme.jpg")
 sol_sprite = pygame.image.load(graphics_dir + "/sol.jpg")
-
-#############################
 
 backs = [back1,back3,back4]
 
@@ -187,10 +183,13 @@ def check_collisions(perso,platform,platform_list): #Explanations in the README.
         perso.reset_position()
 
 
+#TEST GIT BRANCH
+
 platform_list = create_level()
 random_background = r.choice(backs)
 collisions_list = give_rect_for_collision()
 perso = Character(width/2,height-platform_height-50,30,50)
+perso.draw()
 
 while True:
     
