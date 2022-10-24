@@ -1,6 +1,6 @@
 import pygame 
-from sprites import *
-from ISN import width,height,platform_height
+import random as r
+import sprites as s
 
 class Character:
     def __init__(self,x,y,w,h):
@@ -14,11 +14,11 @@ class Character:
 
     def draw(self,screen):
         if self.direction == "right":
-            if self.sprite == 1: screen.blit(perso_sprite_right_1,self.body)
-            elif self.sprite == 2 : screen.blit(perso_sprite_right_2,self.body)
+            if self.sprite == 1: screen.blit(s.perso_sprite_right_1,self.body)
+            elif self.sprite == 2 : screen.blit(s.perso_sprite_right_2,self.body)
         elif self.direction == "left":
-            if self.sprite == 1: screen.blit(perso_sprite_left_1,self.body)
-            elif self.sprite == 2 : screen.blit(perso_sprite_left_2,self.body)
+            if self.sprite == 1: screen.blit(s.perso_sprite_left_1,self.body)
+            elif self.sprite == 2 : screen.blit(s.perso_sprite_left_2,self.body)
         
     def update_frame(self):
         self.frame += 1
@@ -27,7 +27,7 @@ class Character:
         elif self.frame >= 100 :self.frame =0
         else: print("Not a valid frame")
 
-    def reset_position(self):
+    def reset_position(self,width,height,platform_height):
         self.body.x = width/2
         self.body.y = height-platform_height-50
 
@@ -36,28 +36,26 @@ class Platform:
     def __init__(self,x,y,w,h,color):
         self.body = pygame.Rect(x,y,w,h)
         self.color = color
-    def draw(self,screen):
+    def draw(self,screen,width,height):
         if self.body.width == width:
-            screen.blit(sol_sprite,self.body)
+            screen.blit(s.sol_sprite,self.body)
         else:
-            screen.blit(platforme_sprite,self.body)
+            screen.blit(s.platforme_sprite,self.body)
 
 class Platform_List:
-    def __init__(self):
+    def __init__(self,height,width,platform_height):
         self.sol = Platform(0,height-platform_height,width,platform_height,"Black") 
         self.list = []
         self.len = 0
         self.flag = Platform(0,0,10,30,"Green")
     
-    def draw_level(self,screen):
-        self.sol.draw()
+    def draw_level(self,screen,width,height):
+        self.sol.draw(screen,width,height)
         for i in range(self.len):
-            self.list[i].draw()
-        screen.blit(flag_sprite,self.flag.body)
+            self.list[i].draw(screen,width,height)
+        screen.blit(s.flag_sprite,self.flag.body)
 
-    def restart(self):
-        global random_background
-        random_background = r.choice(backs)
+    def restart(self,platform_width,width):
         for i in range(self.len):
             new_x = r.randint(0,width-platform_width)
             if i>0:
